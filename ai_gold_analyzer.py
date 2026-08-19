@@ -5,10 +5,14 @@ import requests
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-
 if not GROQ_API_KEY:
     print("ERROR: GROQ_API_KEY is not configured.")
     exit(1)
+
+
+API_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+MODEL = "llama-3.1-8b-instant"
 
 
 def analyze_gold_news(title):
@@ -16,31 +20,21 @@ def analyze_gold_news(title):
     prompt = f"""
 You are a professional financial news analyst specializing in Gold (XAU/USD).
 
-Analyze the following breaking-news headline.
+Analyze this news headline:
 
-HEADLINE:
 {title}
 
-Your task is to determine whether this news could cause a sudden,
-meaningful movement in Gold/XAUUSD.
+Determine whether this news could cause a sudden meaningful movement
+in Gold/XAUUSD.
 
-IMPORTANT:
-- Do NOT give trading advice.
-- Do NOT predict an exact price.
-- Focus only on likely market impact.
-- Ignore ordinary commentary and old/background information.
-- Pay special attention to unexpected Fed decisions, interest rates,
-  inflation, US dollar moves, Treasury yields, major geopolitical events,
-  wars, military attacks, sanctions, and major economic surprises.
-
-Return ONLY valid JSON in this exact format:
+Return ONLY valid JSON:
 
 {{
   "is_market_moving": true,
   "gold_direction": "BULLISH",
   "impact": "EXTREME",
   "confidence": 90,
-  "reason": "Short explanation"
+  "reason": "Short explanation."
 }}
 
 Rules:
@@ -59,10 +53,9 @@ integer from 0 to 100
 
 reason:
 maximum 2 short sentences.
+
+Do not give trading advice.
 """
-
-
-    url = "https://api.groq.com/openai/v1/chat/completions"
 
 
     headers = {
@@ -71,15 +64,18 @@ maximum 2 short sentences.
     }
 
 
-    data = {
-        "model": "llama-3.1-8b-instant",
+    payload = {
+        "model": MODEL,
+
         "messages": [
             {
                 "role": "user",
                 "content": prompt
             }
         ],
+
         "temperature": 0,
+
         "response_format": {
             "type": "json_object"
         }
@@ -87,21 +83,25 @@ maximum 2 short sentences.
 
 
     response = requests.post(
-        url,
+        API_URL,
         headers=headers,
-        json=data,
-        timeout=30
+        json=payload,
+        timeout=60
     )
 
 
-    response.raise_for_status()
+    # Show useful error information
+    if response.status_code != 200:
+
+        print("Groq HTTP status:", response.status_code)
+        print("Groq response:", response.text)
+
+        response.raise_for_status()
 
 
     result = response.json()
 
-
     content = result["choices"][0]["message"]["content"]
-
 
     return json.loads(content)
 
