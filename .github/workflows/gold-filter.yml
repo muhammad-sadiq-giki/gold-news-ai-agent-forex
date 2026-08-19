@@ -3,6 +3,9 @@ name: Gold News Filter
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   filter-news:
     runs-on: ubuntu-latest
@@ -21,3 +24,17 @@ jobs:
 
       - name: Run Gold News Filter
         run: python gold_filter.py
+
+      - name: Save news memory
+        run: |
+          git config --global user.name "Gold News AI"
+          git config --global user.email "gold-news-ai@users.noreply.github.com"
+
+          git add seen_news.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to seen_news.json"
+          else
+            git commit -m "Update seen news memory"
+            git push
+          fi
