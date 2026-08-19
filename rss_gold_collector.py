@@ -27,45 +27,172 @@ MAX_AGE_HOURS = 2
 # ============================================================
 # GOLD IMPACT KEYWORDS
 # ============================================================
-
 HOT_EVENTS = {
-    "war": 40,
-    "attack": 40,
-    "missile": 45,
-    "invasion": 50,
-    "iran": 25,
-    "israel": 25,
-    "nuclear": 50,
-    "ceasefire": 30,
-    "sanctions": 25,
+
+    # ========================================================
+    # GOLD PRICE / MARKET MOVEMENT
+    # ========================================================
+
+    "gold leaps": 60,
+    "gold jumps": 60,
+    "gold surges": 60,
+    "gold spikes": 60,
+    "gold plunges": 60,
+    "gold crashes": 70,
+    "gold tumbles": 50,
+    "gold falls": 35,
+    "gold rises": 30,
+    "gold rebounds": 30,
+
+    "gold gains": 25,
+    "gold rally": 40,
+    "gold rallies": 40,
+
+    "$100": 50,
+    "$50": 30,
+
+    "record high": 45,
+    "all-time high": 50,
+
+    # ========================================================
+    # US TREASURY / BONDS / YIELDS
+    # ========================================================
+
+    "treasury bond": 30,
+    "treasury bonds": 30,
+    "bond yields": 30,
+    "bond yield": 30,
+    "treasury yield": 30,
+    "treasury yields": 30,
+
+    "yield falls": 35,
+    "yields fall": 35,
+    "yield rises": 30,
+    "yields rise": 30,
+
+    "bond buybacks": 50,
+    "treasury buybacks": 50,
+
+    # ========================================================
+    # FEDERAL RESERVE
+    # ========================================================
 
     "federal reserve": 30,
-    "fed": 25,
-    "interest rate": 25,
-    "rate cut": 40,
-    "rate hike": 40,
-    "emergency rate": 50,
+    "fed": 20,
+    "fed meeting": 35,
+    "fed minutes": 35,
+    "fed decision": 50,
 
-    "inflation": 20,
-    "cpi": 35,
-    "jobs report": 30,
-    "nonfarm payroll": 40,
-    "unemployment": 25,
+    "interest rate": 25,
+    "interest rates": 25,
+
+    "rate cut": 45,
+    "rate cuts": 45,
+
+    "rate hike": 45,
+    "rate hikes": 45,
+
+    "emergency rate": 60,
+    "emergency meeting": 60,
+
+    "quantitative easing": 50,
+    "quantitative tightening": 40,
+
+    # ========================================================
+    # US ECONOMIC DATA
+    # ========================================================
+
+    "cpi": 40,
+    "inflation": 25,
+
+    "jobs report": 35,
+    "nonfarm payroll": 45,
+    "payrolls": 35,
+
+    "unemployment": 30,
+    "unemployment rate": 35,
+
+    "ppi": 35,
+    "retail sales": 25,
+    "gdp": 30,
+
+    # ========================================================
+    # GEOPOLITICAL EVENTS
+    # ========================================================
+
+    "war": 45,
+    "attack": 45,
+    "missile": 50,
+    "missile strike": 55,
+    "airstrike": 50,
+
+    "invasion": 60,
+    "nuclear": 60,
+
+    "iran": 25,
+    "israel": 25,
+
+    "middle east": 30,
+
+    "ceasefire": 35,
+    "peace deal": 25,
+
+    "sanctions": 30,
+
+    "military": 30,
+    "military strike": 50,
+
+    # ========================================================
+    # TRADE / TARIFFS
+    # ========================================================
 
     "tariff": 25,
-    "trade war": 40,
+    "tariffs": 25,
 
-    "banking crisis": 50,
-    "financial crisis": 50,
+    "trade war": 45,
+    "trade deal": 25,
+
+    # ========================================================
+    # FINANCIAL CRISIS
+    # ========================================================
+
+    "banking crisis": 60,
+    "bank failure": 60,
+    "bank collapse": 70,
+
+    "financial crisis": 60,
+    "market crash": 60,
+
+    # ========================================================
+    # US DOLLAR
+    # ========================================================
 
     "us dollar": 20,
-    "dollar falls": 25,
+    "dollar falls": 30,
+    "dollar drops": 35,
+    "dollar plunges": 50,
+
     "dollar rises": 20,
+    "dollar strengthens": 25,
+
+    # ========================================================
+    # CENTRAL BANKS
+    # ========================================================
 
     "central bank": 20,
-    "trump": 15
-}
+    "central banks": 20,
 
+    "ecb": 20,
+    "boj": 20,
+    "bank of japan": 25,
+    "bank of england": 20,
+
+    # ========================================================
+    # IMPORTANT POLITICAL FIGURES
+    # ========================================================
+
+    "trump": 10
+}
 
 # ============================================================
 # LOAD MEMORY
