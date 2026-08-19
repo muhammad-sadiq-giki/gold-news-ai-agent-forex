@@ -3,14 +3,20 @@ name: RSS Gold Collector
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: "*/15 * * * *"
+
 permissions:
   contents: write
 
 jobs:
+
   collect-gold-news:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -19,22 +25,23 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install requests
-        run: pip install requests
+      - name: Install dependencies
+        run: |
+          pip install requests
 
-      - name: Collect recent gold news
-        run: python rss_gold_collector.py
+      - name: Run Gold News Collector
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          python rss_gold_collector.py
 
       - name: Save news memory
         run: |
-          git config --global user.name "Gold News AI"
-          git config --global user.email "gold-news-ai@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add seen_news.json
 
-          if git diff --cached --quiet; then
-            echo "No changes to seen_news.json"
-          else
-            git commit -m "Update RSS news memory"
-            git push
-          fi
+          git diff --cached --quiet || git commit -m "Update gold news memory"
+
+          git push
