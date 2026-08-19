@@ -7,7 +7,6 @@ permissions:
   contents: read
 
 jobs:
-
   test-discord:
 
     runs-on: ubuntu-latest
