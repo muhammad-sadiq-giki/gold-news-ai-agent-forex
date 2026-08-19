@@ -1,0 +1,23 @@
+name: Gold News Filter
+
+on:
+  workflow_dispatch:
+
+jobs:
+  filter-news:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run Gold News Filter
+        run: python gold_filter.py
