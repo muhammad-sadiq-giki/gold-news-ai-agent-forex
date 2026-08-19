@@ -32,9 +32,8 @@ HEADERS = {
 # ============================================================
 # API SECRETS
 # ============================================================
-env:
-  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK")
 
 # ============================================================
 # GROQ CONFIGURATION
