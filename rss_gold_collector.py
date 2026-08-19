@@ -30,10 +30,17 @@ HEADERS = {
 
 
 # ============================================================
-# GROQ CONFIGURATION
+# API SECRETS
 # ============================================================
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+
+DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK")
+
+
+# ============================================================
+# GROQ CONFIGURATION
+# ============================================================
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -46,21 +53,17 @@ GROQ_MODEL = "openai/gpt-oss-20b"
 
 HOT_EVENTS = {
 
-    # ========================================================
-    # GOLD PRICE / MARKET MOVEMENT
-    # ========================================================
-
+    # GOLD
     "gold leaps": 60,
     "gold jumps": 60,
     "gold surges": 60,
     "gold spikes": 60,
-    "gold plunges": 60,
+    "gold plunges": 70,
     "gold crashes": 70,
     "gold tumbles": 50,
     "gold falls": 35,
     "gold rises": 30,
     "gold rebounds": 30,
-
     "gold gains": 25,
     "gold rally": 40,
     "gold rallies": 40,
@@ -71,156 +74,102 @@ HOT_EVENTS = {
     "record high": 45,
     "all-time high": 50,
 
-    # ========================================================
-    # US TREASURY / BONDS / YIELDS
-    # ========================================================
-
+    # TREASURY / BONDS
     "treasury bond": 30,
     "treasury bonds": 30,
-
     "bond yields": 30,
     "bond yield": 30,
-
     "treasury yield": 30,
     "treasury yields": 30,
-
     "yield falls": 35,
     "yields fall": 35,
-
     "yield rises": 30,
     "yields rise": 30,
-
     "bond buybacks": 50,
     "treasury buybacks": 50,
 
-    # ========================================================
-    # FEDERAL RESERVE
-    # ========================================================
-
+    # FED
     "federal reserve": 30,
     "fed": 20,
-
     "fed meeting": 35,
     "fed minutes": 35,
     "fed decision": 50,
-
     "interest rate": 25,
     "interest rates": 25,
-
     "rate cut": 45,
     "rate cuts": 45,
-
     "rate hike": 45,
     "rate hikes": 45,
-
     "emergency rate": 60,
     "emergency meeting": 60,
-
     "quantitative easing": 50,
     "quantitative tightening": 40,
 
-    # ========================================================
-    # US ECONOMIC DATA
-    # ========================================================
-
+    # ECONOMIC DATA
     "cpi": 40,
     "inflation": 25,
-
     "jobs report": 35,
     "nonfarm payroll": 45,
     "payrolls": 35,
-
     "unemployment": 30,
     "unemployment rate": 35,
-
     "ppi": 35,
     "retail sales": 25,
     "gdp": 30,
 
-    # ========================================================
-    # GEOPOLITICAL EVENTS
-    # ========================================================
-
+    # GEOPOLITICAL
     "war": 45,
     "attack": 45,
-
     "missile": 50,
     "missile strike": 55,
     "airstrike": 50,
-
     "invasion": 60,
     "nuclear": 60,
-
     "iran": 25,
     "israel": 25,
-
     "middle east": 30,
-
     "ceasefire": 35,
     "peace deal": 25,
-
     "sanctions": 30,
-
     "military": 30,
     "military strike": 50,
 
-    # ========================================================
-    # TRADE / TARIFFS
-    # ========================================================
-
+    # TRADE
     "tariff": 25,
     "tariffs": 25,
-
     "trade war": 45,
     "trade deal": 25,
 
-    # ========================================================
     # FINANCIAL CRISIS
-    # ========================================================
-
     "banking crisis": 60,
     "bank failure": 60,
     "bank collapse": 70,
-
     "financial crisis": 60,
     "market crash": 60,
 
-    # ========================================================
     # US DOLLAR
-    # ========================================================
-
     "us dollar": 20,
-
     "dollar falls": 30,
     "dollar drops": 35,
     "dollar plunges": 50,
-
     "dollar rises": 20,
     "dollar strengthens": 25,
 
-    # ========================================================
     # CENTRAL BANKS
-    # ========================================================
-
     "central bank": 20,
     "central banks": 20,
-
     "ecb": 20,
     "boj": 20,
-
     "bank of japan": 25,
     "bank of england": 20,
 
-    # ========================================================
-    # IMPORTANT POLITICAL FIGURES
-    # ========================================================
-
+    # POLITICS
     "trump": 10
 }
 
 
 # ============================================================
-# LOAD PREVIOUSLY SEEN NEWS
+# LOAD MEMORY
 # ============================================================
 
 if os.path.exists(SEEN_FILE):
@@ -334,6 +283,113 @@ cutoff_time = now - timedelta(
 
 
 # ============================================================
+# DISCORD FUNCTION
+# ============================================================
+
+def send_discord_alert(
+    article,
+    ai_result
+):
+
+    if not DISCORD_WEBHOOK:
+
+        print()
+        print(
+            "ERROR: DISCORD_WEBHOOK is missing."
+        )
+
+        return False
+
+
+    title = article["title"]
+
+    url = article["url"]
+
+    direction = ai_result.get(
+        "gold_direction",
+        "UNCLEAR"
+    )
+
+    impact = ai_result.get(
+        "impact",
+        "UNKNOWN"
+    )
+
+    confidence = ai_result.get(
+        "confidence",
+        0
+    )
+
+    reason = ai_result.get(
+        "reason",
+        ""
+    )
+
+
+    message = (
+        "🚨 **GOLD BREAKING NEWS ALERT** 🚨\n\n"
+        f"**News:** {title}\n\n"
+        f"**Gold Direction:** {direction}\n"
+        f"**AI Impact:** {impact}\n"
+        f"**Confidence:** {confidence}%\n\n"
+        f"**Why:** {reason}\n\n"
+        f"🔗 {url}"
+    )
+
+
+    payload = {
+        "content": message
+    }
+
+
+    try:
+
+        response = requests.post(
+            DISCORD_WEBHOOK,
+            json=payload,
+            timeout=30
+        )
+
+
+        if response.status_code in (
+            200,
+            204
+        ):
+
+            print()
+            print(
+                "Discord alert sent successfully."
+            )
+
+            return True
+
+
+        print()
+        print(
+            "Discord HTTP status:",
+            response.status_code
+        )
+
+        print(
+            "Discord response:",
+            response.text
+        )
+
+        return False
+
+
+    except Exception as error:
+
+        print()
+        print(
+            "Discord alert failed:",
+            error
+        )
+
+        return False
+
+
+# ============================================================
 # GROQ AI FUNCTION
 # ============================================================
 
@@ -342,7 +398,9 @@ def analyze_with_ai(title):
     if not GROQ_API_KEY:
 
         print()
-        print("ERROR: GROQ_API_KEY is missing.")
+        print(
+            "ERROR: GROQ_API_KEY is missing."
+        )
 
         return None
 
@@ -424,13 +482,9 @@ Do not give trading advice.
     try:
 
         response = requests.post(
-
             GROQ_URL,
-
             headers=headers,
-
             json=payload,
-
             timeout=60
         )
 
@@ -509,7 +563,7 @@ for item in items:
 
 
     # --------------------------------------------------------
-    # Check required fields
+    # Required fields
     # --------------------------------------------------------
 
     if not title or not link or not pub_date:
@@ -518,7 +572,7 @@ for item in items:
 
 
     # --------------------------------------------------------
-    # Parse publication date
+    # Publication date
     # --------------------------------------------------------
 
     try:
@@ -539,7 +593,7 @@ for item in items:
 
 
     # --------------------------------------------------------
-    # Ignore old news
+    # Recent news only
     # --------------------------------------------------------
 
     if published < cutoff_time:
@@ -548,7 +602,7 @@ for item in items:
 
 
     # --------------------------------------------------------
-    # Ignore previously seen news
+    # Previously seen?
     # --------------------------------------------------------
 
     if link in seen_news:
@@ -557,7 +611,7 @@ for item in items:
 
 
     # --------------------------------------------------------
-    # Ignore duplicate URLs in this run
+    # Duplicate during this run?
     # --------------------------------------------------------
 
     if link in new_urls:
@@ -569,7 +623,7 @@ for item in items:
 
 
     # ========================================================
-    # KEYWORD IMPACT SCORE
+    # KEYWORD SCORE
     # ========================================================
 
     title_lower = title.lower()
@@ -590,8 +644,6 @@ for item in items:
             )
 
 
-    # Maximum score = 100
-
     score = min(
         score,
         100
@@ -599,7 +651,7 @@ for item in items:
 
 
     # ========================================================
-    # KEYWORD IMPACT LEVEL
+    # KEYWORD IMPACT
     # ========================================================
 
     if score >= 80:
@@ -626,7 +678,7 @@ for item in items:
     ai_result = None
 
 
-    # Only send potentially important news to AI
+    # Only important keyword candidates go to AI
 
     if score >= 30:
 
@@ -647,13 +699,61 @@ for item in items:
             "/ 100"
         )
 
+
         ai_result = analyze_with_ai(
             title
         )
 
 
+        # ====================================================
+        # DISCORD DECISION
+        # ====================================================
+
+        if ai_result:
+
+            is_market_moving = ai_result.get(
+                "is_market_moving",
+                False
+            )
+
+            ai_impact = ai_result.get(
+                "impact",
+                "LOW"
+            )
+
+
+            if (
+                is_market_moving
+                and ai_impact in (
+                    "HIGH",
+                    "EXTREME"
+                )
+            ):
+
+                print()
+                print("=" * 70)
+                print("IMPORTANT GOLD NEWS DETECTED")
+                print("=" * 70)
+
+                send_discord_alert(
+                    {
+                        "title": title,
+                        "url": link
+                    },
+                    ai_result
+                )
+
+            else:
+
+                print()
+                print(
+                    "AI decided this news does not "
+                    "require a Discord alert."
+                )
+
+
     # ========================================================
-    # SAVE ARTICLE
+    # STORE ARTICLE
     # ========================================================
 
     new_articles.append({
@@ -741,7 +841,7 @@ for article in new_articles:
 
 
     # ========================================================
-    # AI RESULTS
+    # AI RESULT
     # ========================================================
 
     if article["ai"]:
@@ -805,7 +905,7 @@ for article in new_articles:
     )
 
 
-# Keep memory manageable
+# Keep maximum 500 URLs
 
 if len(seen_news) > 500:
 
@@ -847,7 +947,6 @@ print(
     len(seen_news)
 )
 
-
 print(
     "New articles:",
     len(new_articles)
@@ -887,4 +986,6 @@ print(
 
 
 print()
-print("Gold News AI Collector finished.")
+print(
+    "Gold News AI Collector finished."
+)
