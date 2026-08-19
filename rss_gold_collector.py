@@ -22,7 +22,43 @@ headers = {
 }
 
 MAX_AGE_HOURS = 2
+HOT_EVENTS = {
+    "war": 40,
+    "attack": 40,
+    "missile": 45,
+    "invasion": 50,
+    "iran": 25,
+    "israel": 25,
+    "nuclear": 50,
+    "ceasefire": 30,
+    "sanctions": 25,
 
+    "federal reserve": 30,
+    "fed": 25,
+    "interest rate": 25,
+    "rate cut": 40,
+    "rate hike": 40,
+    "emergency rate": 50,
+
+    "inflation": 20,
+    "cpi": 35,
+    "jobs report": 30,
+    "nonfarm payroll": 40,
+    "unemployment": 25,
+
+    "tariff": 25,
+    "trade war": 40,
+
+    "banking crisis": 50,
+    "financial crisis": 50,
+
+    "us dollar": 20,
+    "dollar falls": 25,
+    "dollar rises": 20,
+
+    "central bank": 20,
+    "trump": 15
+}
 
 # ============================================================
 # LOAD MEMORY
